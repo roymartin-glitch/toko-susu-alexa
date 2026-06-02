@@ -1,0 +1,116 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Package,
+  Users,
+  FileText,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Store,
+} from 'lucide-react'
+import { useState } from 'react'
+import { APP_NAME, APP_SUBTITLE } from '@/lib/constants'
+
+const menuItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/pos', label: 'Transaksi', icon: ShoppingCart },
+  { href: '/products', label: 'Barang', icon: Package },
+  { href: '/customers', label: 'Pelanggan', icon: Users },
+  { href: '/reports', label: 'Laporan', icon: FileText },
+  { href: '/settings', label: 'Pengaturan', icon: Settings },
+]
+
+export default function Sidebar() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(false)
+
+  const isActive = (href) => {
+    return pathname.startsWith(href)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    window.location.href = '/login'
+  }
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-lg transition-colors"
+      >
+        {isOpen ? <X size={20} className="text-gray-900 dark:text-white" /> : <Menu size={20} className="text-gray-900 dark:text-white" />}
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-[#0F172A] to-[#1E293B] border-r border-gray-800 transition-all duration-300 z-40 md:translate-x-0 shadow-2xl ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-800">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+              <Store size={24} className="text-white" />
+            </div>
+            <div>
+              <h1 className="font-bold text-xl text-white">{APP_NAME}</h1>
+              <p className="text-xs text-gray-400">{APP_SUBTITLE}</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="p-4 space-y-2 overflow-y-auto h-[calc(100vh-180px)]">
+          {menuItems.map((item) => {
+            const Icon = item.icon
+            const active = isActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-full transition-all group ${
+                  active
+                    ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/30'
+                    : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                }`}
+              >
+                <Icon size={20} className={active ? 'text-white' : 'text-gray-400 group-hover:text-emerald-400'} />
+                <span className={`font-medium ${active ? 'text-white' : ''}`}>{item.label}</span>
+              </Link>
+            )
+          })}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all group shadow-lg"
+          >
+            <LogOut size={20} className="group-hover:rotate-12 transition-transform" />
+            <span className="font-medium">Keluar</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden transition-opacity"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
+  )
+}
