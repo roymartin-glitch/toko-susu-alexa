@@ -21,16 +21,28 @@ export default function LoginPage() {
       return
     }
 
-    if (password !== '123') {
-      toast.error('Password salah. Gunakan: 123')
-      return
-    }
-
     setIsLoading(true)
 
     try {
+      // Call login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        toast.error(data.error || 'Login gagal')
+        setIsLoading(false)
+        return
+      }
+
       // Store user session
-      const userData = { email, name: 'Admin Toko', loggedIn: true }
+      const userData = { email: data.user.email, name: data.user.name, loggedIn: true }
       localStorage.setItem('user', JSON.stringify(userData))
       
       toast.success('Login berhasil!')
@@ -38,7 +50,8 @@ export default function LoginPage() {
       // Redirect to dashboard
       window.location.href = '/dashboard'
     } catch (error) {
-      toast.error('Login gagal')
+      console.error('Login error:', error)
+      toast.error('Login gagal. Periksa koneksi Anda.')
       setIsLoading(false)
     }
   }

@@ -1,19 +1,23 @@
 import { transactionsApi, productsApi } from '@/lib/supabase'
+import { verifyAuth, errorResponse } from '@/lib/api-auth'
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const { error } = verifyAuth(request)
+    if (error) return error
+
     const transactions = await transactionsApi.getAll()
     return Response.json({ success: true, data: transactions })
   } catch (error) {
-    return Response.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    )
+    return errorResponse(error)
   }
 }
 
 export async function POST(request) {
   try {
+    const { error } = verifyAuth(request)
+    if (error) return error
+
     const body = await request.json()
     
     // Create transaction
@@ -36,9 +40,6 @@ export async function POST(request) {
     
     return Response.json({ success: true, data: transaction }, { status: 201 })
   } catch (error) {
-    return Response.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    )
+    return errorResponse(error)
   }
 }
