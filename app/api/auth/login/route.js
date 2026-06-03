@@ -1,4 +1,5 @@
 import { validateCredentials, generateToken } from '@/lib/auth'
+import { NextResponse } from 'next/server'
 
 export async function POST(request) {
   try {
@@ -7,7 +8,7 @@ export async function POST(request) {
 
     // Input validation
     if (!email || !password) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, error: 'Email dan password harus diisi' },
         { status: 400 }
       )
@@ -16,7 +17,7 @@ export async function POST(request) {
     // Validate credentials
     const user = await validateCredentials(email, password)
     if (!user) {
-      return Response.json(
+      return NextResponse.json(
         { success: false, error: 'Email atau password salah' },
         { status: 401 }
       )
@@ -31,7 +32,7 @@ export async function POST(request) {
     })
 
     // Create response with token in HttpOnly cookie
-    const response = Response.json(
+    const response = NextResponse.json(
       {
         success: true,
         user: {
@@ -57,7 +58,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Login error:', error)
     // Don't expose error details to client
-    return Response.json(
+    return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
     )

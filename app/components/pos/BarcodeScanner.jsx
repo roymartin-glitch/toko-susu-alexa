@@ -64,37 +64,83 @@ export default function BarcodeScanner({ onScan, onClose }) {
       setError(null)
       setIsScanning(true)
 
-      // Check if device has camera
-      const devices = await Html5Qrcode.getCameras()
-      if (!devices || devices.length === 0) {
-        throw new Error('Tidak ada kamera ditemukan di device')
+      console.log('=== STARTING SCANNER ===')
+
+      // STEP 1: Test camera access directly first
+      console.log('Step 1: Testing getUserMedia...')
+      let testStream = null
+      try {
+        testStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        })
+        console.log('✅ getUserMedia works! Stream:', testStream)
+        // Stop test stream
+        testStream.getTracks().forEach(track => {
+          console.log('Stopping track:', track)
+          track.stop()
+        })
+      } catch (testErr) {
+        console.error('❌ getUserMedia failed:', testErr.name, testErr.message)
+        throw testErr
       }
 
+      // STEP 2: Wait untuk DOM render
+      console.log('Step 2: Waiting for DOM...')
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      const readerElement = document.getElementById('barcode-reader')
+      if (!readerElement) {
+        throw new Error('barcode-reader div not found')
+      }
+      console.log('✅ DOM ready:', readerElement)
+
+      // STEP 3: Initialize Html5Qrcode
+      console.log('Step 3: Creating Html5Qrcode instance...')
       const html5QrCode = new Html5Qrcode('barcode-reader')
       html5QrCodeRef.current = html5QrCode
+      console.log('✅ Html5Qrcode instance created')
 
+      // STEP 4: Get cameras
+      console.log('Step 4: Getting available cameras...')
+      let devices = []
+      try {
+        devices = await Html5Qrcode.getCameras()
+        console.log('✅ Cameras found:', devices)
+      } catch (camErr) {
+        console.warn('⚠️ getCameras failed, using default:', camErr.message)
+        devices = [{ id: 'user', label: 'Default Camera' }]
+      }
+
+      // STEP 5: Select camera
+      console.log('Step 5: Selecting camera...')
+      let cameraId = devices[0]?.id || 'user'
+      const backCamera = devices.find(device => 
+        device.label.toLowerCase().includes('back') || 
+        device.label.toLowerCase().includes('rear') ||
+        device.label.toLowerCase().includes('environment')
+      )
+      if (backCamera) {
+        cameraId = backCamera.id
+        console.log('✅ Using back camera:', cameraId)
+      } else {
+        console.log('✅ Using default camera:', cameraId)
+      }
+
+      // STEP 6: Start scanner
+      console.log('Step 6: Starting Html5Qrcode.start()...')
       const config = {
         fps: 10,
         qrbox: { width: 250, height: 150 },
         aspectRatio: 1.777778,
         disableFlip: false,
-        formatsToSupport: [
-          Html5Qrcode.SCAN_TYPE_CAMERA
-        ]
       }
-
-      // Gunakan kamera belakang jika tersedia (untuk mobile)
-      const backCamera = devices.find(device => 
-        device.label.toLowerCase().includes('back') || 
-        device.label.toLowerCase().includes('rear')
-      )
-      const cameraId = backCamera ? backCamera.id : devices[0].id
 
       await html5QrCode.start(
         cameraId,
         config,
         (decodedText) => {
-          // Trigger scan
+          console.log('✅ BARCODE DETECTED:', decodedText)
           setLastScanned(decodedText)
           onScan(decodedText)
           stopScanner()
@@ -103,9 +149,26 @@ export default function BarcodeScanner({ onScan, onClose }) {
           // Silently ignore scanning errors
         }
       )
+
+      console.log('✅✅✅ SCANNER FULLY STARTED ✅✅✅')
+
     } catch (err) {
-      console.error('Scanner error:', err)
-      setError(err.message || 'Tidak dapat mengakses kamera. Gunakan mode lain.')
+      console.error('❌ SCANNER ERROR:', err)
+      console.error('  Name:', err.name)
+      console.error('  Message:', err.message)
+      console.error('  Stack:', err.stack)
+
+      // Map errors to user-friendly messages
+      if (err.name === 'NotAllowedError') {
+        setError('🔴 IZIN KAMERA DITOLAK\n\n✔️ SOLUSI:\n1. Pengaturan HP → Privacy → Camera → Izinkan browser\n2. Atau reset izin: Pengaturan → Apps → Browser → Permissions → Camera → Reset\n3. Refresh halaman\n4. Coba lagi')
+      } else if (err.name === 'NotFoundError') {
+        setError('❌ KAMERA TIDAK DITEMUKAN\n\nDevice ini mungkin tidak punya kamera.')
+      } else if (err.message?.includes('user media')) {
+        setError('❌ getUserMedia error\n\n' + err.message + '\n\nCoba reset izin kamera di pengaturan device')
+      } else {
+        setError('❌ SCANNER ERROR\n\n' + (err.message || 'Unknown error') + '\n\nGunakan Mode Manual untuk sementara')
+      }
+
       setIsScanning(false)
     }
   }
@@ -206,7 +269,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
               <AlertCircle size={18} className="text-red-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700 whitespace-pre-line">{error}</p>
             </div>
           )}
 
@@ -220,7 +283,7 @@ export default function BarcodeScanner({ onScan, onClose }) {
                 ref={manualInputRef}
                 type="text"
                 placeholder="Ketik barcode dan tekan Enter"
-                onKeyPress={handleManualEntry}
+                onKeyDown={handleManualEntry}
                 className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors text-lg"
                 autoComplete="off"
               />
@@ -239,6 +302,14 @@ export default function BarcodeScanner({ onScan, onClose }) {
                   <p className="text-gray-600 mb-4 font-medium">
                     Gunakan kamera HP untuk scan barcode
                   </p>
+                  {window.location.protocol === 'http:' && !window.location.hostname.includes('localhost') && (
+                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
+                      <p className="text-xs text-yellow-800 font-medium mb-2">⚠️ Akses HTTP terdeteksi</p>
+                      <p className="text-xs text-yellow-700">Browser mungkin memblokir kamera pada koneksi HTTP non-localhost. Coba akses dari:</p>
+                      <p className="text-xs text-yellow-700 mt-1">• Localhost/127.0.0.1:3000</p>
+                      <p className="text-xs text-yellow-700">• HTTPS dengan sertifikat valid</p>
+                    </div>
+                  )}
                   <button
                     onClick={startScanner}
                     className="w-full px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium transition-colors flex items-center justify-center gap-2"
