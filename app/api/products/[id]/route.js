@@ -1,5 +1,6 @@
 import { productsApi } from '@/lib/supabase'
 import { verifyAuth, errorResponse } from '@/lib/api-auth'
+import { validateForm, productSchema } from '@/lib/validators' // ✅ ADD validation
 
 export async function GET(request, { params }) {
   try {
@@ -19,7 +20,17 @@ export async function PUT(request, { params }) {
     if (error) return error
 
     const body = await request.json()
-    const product = await productsApi.update(params.id, body)
+    
+    // ✅ SECURITY: Validate input
+    const validation = await validateForm(productSchema, body)
+    if (!validation.success) {
+      return Response.json(
+        { success: false, errors: validation.errors },
+        { status: 400 }
+      )
+    }
+    
+    const product = await productsApi.update(params.id, validation.data)
     return Response.json({ success: true, data: product })
   } catch (error) {
     return errorResponse(error)

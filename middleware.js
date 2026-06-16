@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { verifyToken } from '@/lib/auth'
+import { verifyToken } from '@/lib/auth-secure' // ✅ CHANGED to secure auth
 
 export function middleware(request) {
   const { pathname } = request.nextUrl

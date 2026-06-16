@@ -1,8 +1,41 @@
-import { validateCredentials, generateToken } from '@/lib/auth'
+import { validateCredentials, generateToken } from '@/lib/auth-secure' // ✅ CHANGED to secure auth
 import { NextResponse } from 'next/server'
+
+// ✅ SECURITY: Simple rate limiting (in-memory)
+const loginAttempts = new Map()
+const MAX_ATTEMPTS = 5
+const WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+
+function checkRateLimit(ip) {
+  const now = Date.now()
+  const attempts = loginAttempts.get(ip) || []
+  
+  // Clean old attempts
+  const recentAttempts = attempts.filter(time => now - time < WINDOW_MS)
+  
+  if (recentAttempts.length >= MAX_ATTEMPTS) {
+    return false // Rate limited
+  }
+  
+  recentAttempts.push(now)
+  loginAttempts.set(ip, recentAttempts)
+  return true
+}
 
 export async function POST(request) {
   try {
+    // ✅ SECURITY: Rate limiting
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown'
+               
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { success: false, error: 'Terlalu banyak percobaan login. Coba lagi dalam 15 menit.' },
+        { status: 429 }
+      )
+    }
+
     const body = await request.json()
     const { email, password } = body
 
@@ -14,7 +47,7 @@ export async function POST(request) {
       )
     }
 
-    // Validate credentials
+    // ✅ SECURE: Validate credentials with bcrypt
     const user = await validateCredentials(email, password)
     if (!user) {
       return NextResponse.json(
@@ -45,7 +78,7 @@ export async function POST(request) {
       { status: 200 }
     )
 
-    // Set HttpOnly cookie for token (more secure than localStorage)
+    // ✅ SECURE: Set HttpOnly cookie for token
     response.cookies.set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -57,7 +90,7 @@ export async function POST(request) {
     return response
   } catch (error) {
     console.error('Login error:', error)
-    // Don't expose error details to client
+    // ✅ SECURE: Don't expose error details to client
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

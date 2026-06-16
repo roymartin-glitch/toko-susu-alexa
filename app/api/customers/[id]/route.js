@@ -1,5 +1,6 @@
 import { customersApi } from '@/lib/supabase'
 import { verifyAuth, errorResponse } from '@/lib/api-auth'
+import { validateForm, customerSchema } from '@/lib/validators' // ✅ ADD validation
 
 export async function GET(request, { params }) {
   try {
@@ -19,7 +20,17 @@ export async function PUT(request, { params }) {
     if (error) return error
 
     const body = await request.json()
-    const customer = await customersApi.update(params.id, body)
+    
+    // ✅ SECURITY: Validate input
+    const validation = await validateForm(customerSchema, body)
+    if (!validation.success) {
+      return Response.json(
+        { success: false, errors: validation.errors },
+        { status: 400 }
+      )
+    }
+    
+    const customer = await customersApi.update(params.id, validation.data)
     return Response.json({ success: true, data: customer })
   } catch (error) {
     return errorResponse(error)

@@ -171,7 +171,8 @@ const SAMPLE_CUSTOMERS = [
   }
 ]
 
-export async function POST() {
+// Seed logic
+async function seedData() {
   try {
     // Check if data already exists
     const { data: existingProducts } = await supabase
@@ -215,4 +216,19 @@ export async function POST() {
       { status: 500 }
     )
   }
+}
+
+
+// ✅ SECURITY: Main POST handler with production check
+export async function POST(request) {
+  // Disable seed in production
+  if (process.env.NODE_ENV === 'production') {
+    return Response.json(
+      { success: false, error: 'Seed endpoint is disabled in production for security' },
+      { status: 403 }
+    )
+  }
+
+  // Call seed logic in development
+  return seedData()
 }

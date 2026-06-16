@@ -16,6 +16,10 @@ const nextConfig = {
         source: '/:path*',
         headers: [
           {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
@@ -33,7 +37,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            value: 'camera=*, microphone=(), geolocation=()',
           },
           {
             key: 'Strict-Transport-Security',
@@ -41,7 +45,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://fhwmfukyxctrnphtwtmz.supabase.co;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://fhwmfukyxctrnphtwtmz.supabase.co wss://fhwmfukyxctrnphtwtmz.supabase.co https://*.trycloudflare.com;",
           },
         ],
       },
@@ -75,4 +79,3 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
-
