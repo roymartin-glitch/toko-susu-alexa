@@ -30,10 +30,8 @@ export async function POST(request) {
       )
     }
     
-    // Create transaction
-    const transaction = await transactionsApi.create(validation.data)
-    
-    // ✅ SECURITY FIX: Atomic stock update to prevent race conditions
+    // ✅ CRITICAL FIX: Update stock BEFORE creating transaction
+    // This ensures stock is updated even if transaction creation fails
     if (validation.data.items && Array.isArray(validation.data.items)) {
       for (const item of validation.data.items) {
         if (item.product_id && item.quantity > 0) {
@@ -53,23 +51,40 @@ export async function POST(request) {
             throw new Error(`Stock tidak cukup untuk ${product.name}. Tersedia: ${product.stock}, Dibutuhkan: ${item.quantity}`)
           }
 
-          // Atomic update with optimistic locking
+          // Calculate new stock
           const newStock = product.stock - item.quantity
-          const { error: updateError } = await supabase
+          
+          console.log(`Updating stock for ${product.name}: ${product.stock} -> ${newStock} (quantity: ${item.quantity})`)
+
+          // Update stock with optimistic locking
+          const { data: updatedProduct, error: updateError } = await supabase
             .from('products')
             .update({ stock: newStock })
             .eq('id', item.product_id)
             .eq('stock', product.stock) // Optimistic locking - only update if stock hasn't changed
+            .select()
 
           if (updateError) {
-            throw new Error(`Failed to update stock for ${product.name}. Try again.`)
+            console.error('Stock update error:', updateError)
+            throw new Error(`Gagal update stok untuk ${product.name}. Silakan coba lagi.`)
           }
+
+          if (!updatedProduct || updatedProduct.length === 0) {
+            console.error('Optimistic lock failed - stock changed by another transaction')
+            throw new Error(`Stok ${product.name} berubah saat transaksi. Silakan coba lagi.`)
+          }
+
+          console.log(`Stock updated successfully for ${product.name}:`, updatedProduct[0])
         }
       }
     }
     
+    // Create transaction after stock is updated
+    const transaction = await transactionsApi.create(validation.data)
+    
     return Response.json({ success: true, data: transaction }, { status: 201 })
   } catch (error) {
+    console.error('Transaction API error:', error)
     return errorResponse(error)
   }
 }

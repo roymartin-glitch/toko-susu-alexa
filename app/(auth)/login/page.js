@@ -8,7 +8,7 @@ import { APP_NAME } from '@/lib/constants'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('admin@toko.com')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -90,7 +90,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@toko.com"
+                placeholder="Email"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               />
             </div>
@@ -106,7 +106,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="123"
+                  placeholder="Password"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                 />
                 <button
@@ -128,13 +128,6 @@ export default function LoginPage() {
               {isLoading ? 'Memproses...' : 'Masuk ke Dashboard'}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
-            <p className="text-xs font-medium text-emerald-900 mb-2">Demo Credentials:</p>
-            <p className="text-xs text-emerald-700">Email: admin@toko.com</p>
-            <p className="text-xs text-emerald-700">Password: 123</p>
-          </div>
         </div>
 
         {/* Footer Text */}

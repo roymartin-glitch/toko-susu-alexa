@@ -66,12 +66,21 @@ export default function BarcodeScanner({ onScan, onClose }) {
 
       console.log('=== STARTING SCANNER ===')
 
+      // STEP 0: Check if mediaDevices is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API not available. Please use HTTPS or try a different browser.')
+      }
+
       // STEP 1: Test camera access directly first
       console.log('Step 1: Testing getUserMedia...')
       let testStream = null
       try {
         testStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
+          video: { 
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
           audio: false
         })
         console.log('✅ getUserMedia works! Stream:', testStream)
@@ -163,10 +172,12 @@ export default function BarcodeScanner({ onScan, onClose }) {
         setError('🔴 IZIN KAMERA DITOLAK\n\n✔️ SOLUSI:\n1. Pengaturan HP → Privacy → Camera → Izinkan browser\n2. Atau reset izin: Pengaturan → Apps → Browser → Permissions → Camera → Reset\n3. Refresh halaman\n4. Coba lagi')
       } else if (err.name === 'NotFoundError') {
         setError('❌ KAMERA TIDAK DITEMUKAN\n\nDevice ini mungkin tidak punya kamera.')
-      } else if (err.message?.includes('user media')) {
-        setError('❌ getUserMedia error\n\n' + err.message + '\n\nCoba reset izin kamera di pengaturan device')
+      } else if (err.message?.includes('Camera API not available')) {
+        setError('⚠️ KAMERA TIDAK DIDUKUNG\n\n📱 SOLUSI:\n1. Gunakan HTTPS (bukan HTTP)\n2. Atau gunakan Mode Manual untuk input barcode\n\nHTTP tidak support kamera di kebanyakan browser modern.')
+      } else if (err.message?.includes('getUserMedia') || err.message?.includes('undefined')) {
+        setError('⚠️ BROWSER TIDAK SUPPORT KAMERA\n\n📱 SOLUSI:\n1. Coba browser lain (Chrome/Safari)\n2. Update browser ke versi terbaru\n3. Atau gunakan Mode Manual')
       } else {
-        setError('❌ SCANNER ERROR\n\n' + (err.message || 'Unknown error') + '\n\nGunakan Mode Manual untuk sementara')
+        setError('❌ SCANNER ERROR\n\n' + (err.message || 'Unknown error') + '\n\n💡 Gunakan Mode Manual untuk sementara')
       }
 
       setIsScanning(false)
@@ -302,14 +313,15 @@ export default function BarcodeScanner({ onScan, onClose }) {
                   <p className="text-gray-600 mb-4 font-medium">
                     Gunakan kamera HP untuk scan barcode
                   </p>
-                  {window.location.protocol === 'http:' && !window.location.hostname.includes('localhost') && (
-                    <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
-                      <p className="text-xs text-yellow-800 font-medium mb-2">⚠️ Akses HTTP terdeteksi</p>
-                      <p className="text-xs text-yellow-700">Browser mungkin memblokir kamera pada koneksi HTTP non-localhost. Coba akses dari:</p>
-                      <p className="text-xs text-yellow-700 mt-1">• Localhost/127.0.0.1:3000</p>
-                      <p className="text-xs text-yellow-700">• HTTPS dengan sertifikat valid</p>
+                  
+                  {/* Warning untuk HTTP */}
+                  {typeof window !== 'undefined' && window.location.protocol === 'http:' && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1') && (
+                    <div className="mb-4 p-3 bg-yellow-50 border-2 border-yellow-300 rounded-lg text-left">
+                      <p className="text-xs text-yellow-800 font-bold mb-1">⚠️ PERHATIAN:</p>
+                      <p className="text-xs text-yellow-700">Kamera tidak berfungsi di HTTP untuk keamanan. Gunakan Mode Manual atau deploy ke HTTPS.</p>
                     </div>
                   )}
+                  
                   <button
                     onClick={startScanner}
                     className="w-full px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium transition-colors flex items-center justify-center gap-2"
@@ -319,6 +331,9 @@ export default function BarcodeScanner({ onScan, onClose }) {
                   </button>
                   <p className="text-xs text-gray-500 mt-3">
                     📱 Cocok untuk scan dengan HP/Tablet
+                  </p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    ℹ️ Browser akan meminta izin kamera otomatis
                   </p>
                 </div>
               ) : (
