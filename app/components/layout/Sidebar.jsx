@@ -18,12 +18,12 @@ import { useState } from 'react'
 import { APP_NAME, APP_SUBTITLE } from '@/lib/constants'
 
 const menuItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/pos', label: 'Transaksi', icon: ShoppingCart },
-  { href: '/products', label: 'Barang', icon: Package },
-  { href: '/customers', label: 'Pelanggan', icon: Users },
-  { href: '/reports', label: 'Laporan', icon: FileText },
-  { href: '/settings', label: 'Pengaturan', icon: Settings },
+  { href: '/dash', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dash/pos', label: 'Transaksi', icon: ShoppingCart },
+  { href: '/dash/products', label: 'Barang', icon: Package },
+  { href: '/dash/customers', label: 'Pelanggan', icon: Users },
+  { href: '/dash/reports', label: 'Laporan', icon: FileText },
+  { href: '/dash/settings', label: 'Pengaturan', icon: Settings },
 ]
 
 export default function Sidebar() {
@@ -58,7 +58,7 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-800">
-          <Link href="/dashboard" className="flex items-center gap-3 group">
+          <Link href="/dash" className="flex items-center gap-3 group">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <Store size={24} className="text-white" />
             </div>

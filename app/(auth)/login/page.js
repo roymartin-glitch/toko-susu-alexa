@@ -48,7 +48,7 @@ export default function LoginPage() {
       toast.success('Login berhasil!')
       
       // Redirect to dashboard
-      window.location.href = '/dashboard'
+      window.location.href = '/dash'
     } catch (error) {
       console.error('Login error:', error)
       toast.error('Login gagal. Periksa koneksi Anda.')
@@ -57,25 +57,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-emerald-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-emerald-50 flex items-center justify-center p-3 sm:p-4 md:p-6">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
       </div>
 
       {/* Login Card */}
       <div className="relative w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 space-y-4 sm:space-y-6">
           {/* Logo */}
           <div className="text-center space-y-2">
-            <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <ShoppingCart size={32} className="text-white" />
+            <div className="flex justify-center mb-3 sm:mb-4">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <ShoppingCart size={28} className="sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">{APP_NAME}</h1>
-            <p className="text-gray-600">Aplikasi Kasir Toko Susu Modern</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{APP_NAME}</h1>
+            <p className="text-sm sm:text-base text-gray-600">Aplikasi Kasir Toko Susu Modern</p>
           </div>
 
           {/* Form */}
