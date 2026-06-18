@@ -23,16 +23,6 @@ const nextConfig = {
       },
     ]
   },
-  async redirects() {
-    return [
-      {
-        source: '/:path*',
-        has: [{ type: 'header', key: 'x-forwarded-proto', value: 'http' }],
-        permanent: true,
-        destination: 'https://:host/:path*',
-      },
-    ]
-  },
   env: {
     NEXT_PUBLIC_APP_NAME: 'KasirKu',
     NEXT_PUBLIC_CURRENCY: 'IDR',
