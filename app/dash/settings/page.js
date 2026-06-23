@@ -12,10 +12,10 @@ export default function SettingsPage() {
   const deleteCategory = useDeleteCategory()
 
   const [settings, setSettings] = useState({
-    store_name: 'Toko Susu Alexa',
-    address: 'Jl. Merdeka No. 123, Jakarta',
-    phone: '021-1234567',
-    footer: 'Terima kasih telah berbelanja di toko kami',
+    store_name: 'Toko Susu Alexakids',
+    address: 'Jl. Batu Gede, Cilebut Bar., Kec. Sukaraja, Kabupaten Bogor, Jawa Barat 16710',
+    phone: '085276358423',
+    footer: 'Terima kasih atas kunjungan Anda',
     paper_size: '80mm',
     show_logo: true,
     dark_mode: false,

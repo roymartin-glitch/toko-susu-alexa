@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { X, Printer } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
-import { APP_NAME, APP_SUBTITLE } from '@/lib/constants'
+import { STORE_NAME, STORE_ADDRESS, STORE_PHONE } from '@/lib/constants'
 
 export default function ThermalReceipt({ transaction, onClose, onPrint }) {
   const receiptRef = useRef(null)
@@ -154,12 +154,12 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
           >
             {/* Store Header */}
             <div className="header">
-              <div className="store-name">{APP_NAME.toUpperCase()}</div>
+              <div className="store-name">{STORE_NAME.toUpperCase()}</div>
               <div className="store-info">
-                {APP_SUBTITLE}<br />
-                Jl. Contoh No. 123<br />
-                Jakarta Selatan<br />
-                Telp: 021-12345678
+                Jl. Batu Gede, Cilebut Bar.<br />
+                Kec. Sukaraja, Kabupaten Bogor<br />
+                Jawa Barat 16710<br />
+                Telp: {STORE_PHONE}
               </div>
             </div>
 
@@ -221,8 +221,9 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
             {/* Footer */}
             <div className="footer">
               <div className="thank-you">TERIMA KASIH</div>
+              <div>Atas kunjungan Anda</div>
               <div>Barang yang sudah dibeli<br />tidak dapat dikembalikan</div>
-              <div style={{ marginTop: '10px' }}>www.tokosusu.com</div>
+              <div style={{ marginTop: '10px' }}>WhatsApp: {STORE_PHONE}</div>
             </div>
           </div>
         </div>

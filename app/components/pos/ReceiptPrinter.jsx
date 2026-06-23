@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { Printer, X } from 'lucide-react'
+import { STORE_NAME, STORE_ADDRESS, STORE_PHONE } from '@/lib/constants'
 
 export default function ReceiptPrinter({ transaction, onClose }) {
   const receiptRef = useRef()
@@ -78,13 +79,16 @@ export default function ReceiptPrinter({ transaction, onClose }) {
           >
             {/* Store Header */}
             <div className="center bold" style={{ fontSize: '14px' }}>
-              TOKO SUSU KAMI
+              {STORE_NAME.toUpperCase()}
             </div>
             <div className="center" style={{ fontSize: '10px' }}>
-              Jl. Merdeka No. 123, Jakarta
+              Jl. Batu Gede, Cilebut Bar.
             </div>
             <div className="center" style={{ fontSize: '10px' }}>
-              Telp: 021-1234567
+              Kec. Sukaraja, Kab. Bogor, Jawa Barat 16710
+            </div>
+            <div className="center" style={{ fontSize: '10px' }}>
+              Telp: {STORE_PHONE}
             </div>
             
             <div className="line"></div>
@@ -184,6 +188,9 @@ export default function ReceiptPrinter({ transaction, onClose }) {
             </div>
             <div className="center" style={{ fontSize: '10px' }}>
               Barang yang sudah dibeli tidak dapat dikembalikan
+            </div>
+            <div className="center" style={{ fontSize: '10px', marginTop: '5px' }}>
+              WhatsApp: {STORE_PHONE}
             </div>
           </div>
         </div>
