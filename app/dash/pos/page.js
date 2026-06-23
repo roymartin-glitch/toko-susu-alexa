@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useProducts, useCustomers, useCreateTransaction } from '@/lib/hooks'
 import { formatCurrency, generateTransactionNumber, searchInArray } from '@/lib/utils'
-import { Search, Plus, Minus, Trash2, ShoppingCart, X, User, DollarSign, Check } from 'lucide-react'
+import { Search, Plus, Minus, Trash2, ShoppingCart, X, User, DollarSign, Check, ScanLine, Camera } from 'lucide-react'
 import { toast } from 'sonner'
+import BarcodeScanner from '@/app/components/pos/BarcodeScanner'
 
 export default function POSPage() {
   const { data: products = [], isLoading: productsLoading } = useProducts()
@@ -17,6 +18,8 @@ export default function POSPage() {
   const [paymentMethod, setPaymentMethod] = useState('tunai')
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showCustomerModal, setShowCustomerModal] = useState(false)
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false)
+  const searchInputRef = useRef(null)
 
   // Search products
   const filteredProducts = useMemo(() => {
@@ -68,6 +71,17 @@ export default function POSPage() {
       ])
     }
     toast.success(`${product.name} ditambahkan`)
+  }
+
+  // Handle barcode scan
+  const handleBarcodeScan = (barcode) => {
+    const product = products.find((p) => p.barcode === barcode)
+    if (product) {
+      addToCart(product)
+      setSearchQuery('') // Clear search after scan
+    } else {
+      toast.error('Produk tidak ditemukan!')
+    }
   }
 
   // Update quantity
@@ -192,17 +206,39 @@ export default function POSPage() {
 
       {/* MAIN CONTENT */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        {/* Search Bar */}
+        {/* Search Bar with Scan Button */}
         <div className="p-3 sm:p-4 bg-white border-b border-gray-200">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Cari produk atau scan barcode..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-base"
-            />
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Cari produk atau scan barcode..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  // Auto-detect barcode (typically Enter key after scan)
+                  if (e.key === 'Enter' && searchQuery) {
+                    const product = products.find((p) => p.barcode === searchQuery)
+                    if (product) {
+                      addToCart(product)
+                      setSearchQuery('')
+                    }
+                  }
+                }}
+                className="w-full pl-10 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-base"
+              />
+            </div>
+            
+            {/* Scan Barcode Button */}
+            <button
+              onClick={() => setShowBarcodeScanner(true)}
+              className="px-4 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl active:scale-95 flex items-center gap-2 whitespace-nowrap"
+            >
+              <Camera size={20} />
+              <span className="hidden sm:inline">Scan</span>
+            </button>
           </div>
         </div>
 
@@ -437,6 +473,14 @@ export default function POSPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* BARCODE SCANNER MODAL */}
+      {showBarcodeScanner && (
+        <BarcodeScanner
+          onScan={handleBarcodeScan}
+          onClose={() => setShowBarcodeScanner(false)}
+        />
       )}
     </div>
   )
