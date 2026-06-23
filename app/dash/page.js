@@ -10,30 +10,19 @@ import {
   Settings,
   TrendingUp,
   Archive,
-  UserCheck,
   ClipboardList,
   ShoppingBag,
-  BarChart3,
-  Bookmark,
-  Tag,
-  DollarSign,
-  Calendar,
-  Bell,
-  Gift,
   Grid3x3,
-  Milk,
   ShoppingBasket,
   Wallet,
-  Star,
-  Receipt,
-  BadgePercent,
-  Cloud,
+  DollarSign,
+  Bell,
+  Gift,
   Database,
-  CreditCard,
-  RefreshCw,
   PieChart,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Receipt
 } from 'lucide-react'
 import { useMemo } from 'react'
 import Link from 'next/link'
@@ -41,7 +30,7 @@ import QuickActions from '@/app/components/dashboard/QuickActions'
 import RecentActivity from '@/app/components/dashboard/RecentActivity'
 import TopProducts from '@/app/components/dashboard/TopProducts'
 
-// Menu Items - KASGO Style dengan icon colorful dan fitur tambahan
+// Menu Items - KASGO Style dengan icon colorful (hanya fitur relevan untuk kasir toko susu offline)
 const menuItems = [
   { 
     href: '/dash/pos', 
@@ -60,7 +49,7 @@ const menuItems = [
     shadowColor: 'shadow-orange-500/30'
   },
   { 
-    href: '/dash/customers', 
+    href: '/dash/products', 
     label: 'Kategori', 
     icon: Grid3x3, 
     bgColor: 'bg-pink-500',
@@ -68,7 +57,7 @@ const menuItems = [
     shadowColor: 'shadow-pink-500/30'
   },
   { 
-    href: '/dash/reports', 
+    href: '/dash/products', 
     label: 'Stok', 
     icon: Archive, 
     bgColor: 'bg-blue-500',
@@ -101,35 +90,11 @@ const menuItems = [
   },
   { 
     href: '/dash/reports', 
-    label: 'Bahan Baku', 
-    icon: Milk, 
-    bgColor: 'bg-teal-500',
-    hoverColor: 'hover:bg-teal-600',
-    shadowColor: 'shadow-teal-500/30'
-  },
-  { 
-    href: '/dash/reports', 
     label: 'Pembelian', 
     icon: ShoppingBasket, 
     bgColor: 'bg-cyan-500',
     hoverColor: 'hover:bg-cyan-600',
     shadowColor: 'shadow-cyan-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Konsinyasi', 
-    icon: Bookmark, 
-    bgColor: 'bg-yellow-500',
-    hoverColor: 'hover:bg-yellow-600',
-    shadowColor: 'shadow-yellow-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Reservasi', 
-    icon: Calendar, 
-    bgColor: 'bg-sky-500',
-    hoverColor: 'hover:bg-sky-600',
-    shadowColor: 'shadow-sky-500/30'
   },
   { 
     href: '/dash/reports', 
@@ -146,38 +111,6 @@ const menuItems = [
     bgColor: 'bg-rose-600',
     hoverColor: 'hover:bg-rose-700',
     shadowColor: 'shadow-rose-600/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Piutang', 
-    icon: CreditCard, 
-    bgColor: 'bg-fuchsia-500',
-    hoverColor: 'hover:bg-fuchsia-600',
-    shadowColor: 'shadow-fuchsia-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Retur', 
-    icon: RefreshCw, 
-    bgColor: 'bg-violet-500',
-    hoverColor: 'hover:bg-violet-600',
-    shadowColor: 'shadow-violet-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Diskon', 
-    icon: BadgePercent, 
-    bgColor: 'bg-lime-500',
-    hoverColor: 'hover:bg-lime-600',
-    shadowColor: 'shadow-lime-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Loyalitas', 
-    icon: Star, 
-    bgColor: 'bg-amber-500',
-    hoverColor: 'hover:bg-amber-600',
-    shadowColor: 'shadow-amber-500/30'
   },
   { 
     href: '/dash/reports', 

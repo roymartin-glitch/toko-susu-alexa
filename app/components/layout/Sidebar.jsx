@@ -18,12 +18,48 @@ import { useState } from 'react'
 import { APP_NAME, APP_SUBTITLE } from '@/lib/constants'
 
 const menuItems = [
-  { href: '/dash', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dash/pos', label: 'Transaksi', icon: ShoppingCart },
-  { href: '/dash/products', label: 'Barang', icon: Package },
-  { href: '/dash/customers', label: 'Pelanggan', icon: Users },
-  { href: '/dash/reports', label: 'Laporan', icon: FileText },
-  { href: '/dash/settings', label: 'Pengaturan', icon: Settings },
+  { 
+    href: '/dash', 
+    label: 'Dashboard', 
+    icon: LayoutDashboard,
+    bgColor: 'bg-emerald-500',
+    shadowColor: 'shadow-emerald-500/30'
+  },
+  { 
+    href: '/dash/pos', 
+    label: 'Transaksi', 
+    icon: ShoppingCart,
+    bgColor: 'bg-blue-500',
+    shadowColor: 'shadow-blue-500/30'
+  },
+  { 
+    href: '/dash/products', 
+    label: 'Barang', 
+    icon: Package,
+    bgColor: 'bg-orange-500',
+    shadowColor: 'shadow-orange-500/30'
+  },
+  { 
+    href: '/dash/customers', 
+    label: 'Pelanggan', 
+    icon: Users,
+    bgColor: 'bg-purple-500',
+    shadowColor: 'shadow-purple-500/30'
+  },
+  { 
+    href: '/dash/reports', 
+    label: 'Laporan', 
+    icon: FileText,
+    bgColor: 'bg-blue-700',
+    shadowColor: 'shadow-blue-700/30'
+  },
+  { 
+    href: '/dash/settings', 
+    label: 'Pengaturan', 
+    icon: Settings,
+    bgColor: 'bg-gray-600',
+    shadowColor: 'shadow-gray-600/30'
+  },
 ]
 
 export default function Sidebar() {
@@ -79,14 +115,19 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-full transition-all group ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group ${
                   active
-                    ? 'bg-[#10B981] text-white shadow-lg shadow-emerald-500/30'
-                    : 'text-gray-300 hover:bg-gray-800/50 hover:text-white'
+                    ? 'bg-emerald-500/10 border-l-4 border-emerald-500'
+                    : 'hover:bg-gray-800/50'
                 }`}
               >
-                <Icon size={20} className={active ? 'text-white' : 'text-gray-400 group-hover:text-emerald-400'} />
-                <span className={`font-medium ${active ? 'text-white' : ''}`}>{item.label}</span>
+                {/* Icon Badge - Kotak rounded berwarna */}
+                <div className={`w-9 h-9 ${item.bgColor} rounded-xl flex items-center justify-center shadow-lg ${item.shadowColor} group-hover:scale-110 transition-transform flex-shrink-0`}>
+                  <Icon size={18} className="text-white" strokeWidth={2.5} />
+                </div>
+                <span className={`font-medium text-sm ${active ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
+                  {item.label}
+                </span>
               </Link>
             )
           })}
