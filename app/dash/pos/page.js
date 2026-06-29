@@ -6,6 +6,7 @@ import { formatCurrency, generateTransactionNumber, searchInArray } from '@/lib/
 import { Search, Plus, Minus, Trash2, ShoppingCart, X, User, DollarSign, Check, ScanLine, Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import BarcodeScanner from '@/app/components/pos/BarcodeScanner'
+import ThermalReceipt from '@/app/components/pos/ThermalReceipt'
 
 export default function POSPage() {
   const { data: products = [], isLoading: productsLoading } = useProducts()
@@ -19,6 +20,8 @@ export default function POSPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showCustomerModal, setShowCustomerModal] = useState(false)
   const [showBarcodeScanner, setShowBarcodeScanner] = useState(false)
+  const [showReceiptModal, setShowReceiptModal] = useState(false)
+  const [completedTransaction, setCompletedTransaction] = useState(null)
   const searchInputRef = useRef(null)
 
   // Search products
@@ -148,13 +151,21 @@ export default function POSPage() {
 
       await createTransaction.mutateAsync(transactionData)
       
-      // Reset form ONLY after successful transaction
+      // Close payment modal
+      setShowPaymentModal(false)
+      
+      // Show success toast
+      toast.success('✓ Transaksi berhasil!')
+      
+      // Save transaction data and show receipt modal
+      setCompletedTransaction(transactionData)
+      setShowReceiptModal(true)
+      
+      // Reset cart and form AFTER showing receipt
       setCart([])
       setSelectedCustomer(null)
       setPaymentMethod('tunai')
-      setShowPaymentModal(false)
       
-      toast.success('✓ Transaksi berhasil!')
     } catch (error) {
       console.error('Payment error details:', {
         error,
@@ -510,6 +521,21 @@ export default function POSPage() {
         <BarcodeScanner
           onScan={handleBarcodeScan}
           onClose={() => setShowBarcodeScanner(false)}
+        />
+      )}
+
+      {/* RECEIPT PRINT MODAL */}
+      {showReceiptModal && completedTransaction && (
+        <ThermalReceipt
+          transaction={completedTransaction}
+          onClose={() => {
+            setShowReceiptModal(false)
+            setCompletedTransaction(null)
+          }}
+          onPrint={() => {
+            // Optional: do something after print
+            console.log('Receipt printed')
+          }}
         />
       )}
     </div>
