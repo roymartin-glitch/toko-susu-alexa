@@ -3,8 +3,10 @@
 import { useTransactions, useProducts } from '@/lib/hooks'
 import { formatCurrency, formatDate, groupBy, sortBy } from '@/lib/utils'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
-import { Calendar, TrendingUp, Package } from 'lucide-react'
+import { Calendar, TrendingUp, Package, FileDown, Printer } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { STORE_NAME, STORE_ADDRESS, STORE_PHONE } from '@/lib/constants'
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6']
 
@@ -93,24 +95,288 @@ export default function ReportsPage() {
     return sortBy(Object.values(sales), 'date', 'asc')
   }, [filteredTransactions])
 
+  // Export to PDF
+  const handleExportPDF = () => {
+    const printWindow = window.open('', '', 'width=800,height=600')
+    
+    const dateRangeLabel = {
+      today: 'Hari Ini',
+      week: '7 Hari Terakhir',
+      month: '30 Hari Terakhir',
+      all: 'Semua Data'
+    }[dateRange]
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Laporan Penjualan - ${STORE_NAME}</title>
+          <style>
+            @media print {
+              @page {
+                size: A4;
+                margin: 20mm;
+              }
+              body {
+                margin: 0;
+                padding: 0;
+              }
+            }
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 12px;
+              line-height: 1.6;
+              color: #000;
+              background: #fff;
+              padding: 20px;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px solid #000;
+              padding-bottom: 15px;
+            }
+            .store-name {
+              font-size: 24px;
+              font-weight: bold;
+              margin-bottom: 5px;
+            }
+            .store-info {
+              font-size: 11px;
+              color: #555;
+            }
+            .report-title {
+              font-size: 18px;
+              font-weight: bold;
+              margin: 20px 0 10px 0;
+            }
+            .report-meta {
+              font-size: 11px;
+              color: #555;
+              margin-bottom: 20px;
+            }
+            .summary-grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 15px;
+              margin-bottom: 30px;
+            }
+            .summary-card {
+              border: 1px solid #ddd;
+              padding: 15px;
+              border-radius: 5px;
+            }
+            .summary-label {
+              font-size: 11px;
+              color: #666;
+              margin-bottom: 5px;
+            }
+            .summary-value {
+              font-size: 20px;
+              font-weight: bold;
+              color: #000;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+            }
+            th {
+              background: #f5f5f5;
+              padding: 10px;
+              text-align: left;
+              border: 1px solid #ddd;
+              font-weight: bold;
+              font-size: 11px;
+            }
+            td {
+              padding: 8px 10px;
+              border: 1px solid #ddd;
+              font-size: 11px;
+            }
+            .text-right {
+              text-align: right;
+            }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              font-size: 10px;
+              color: #666;
+              border-top: 1px solid #ddd;
+              padding-top: 15px;
+            }
+            .section-title {
+              font-size: 14px;
+              font-weight: bold;
+              margin: 20px 0 10px 0;
+              border-bottom: 1px solid #ddd;
+              padding-bottom: 5px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="store-name">${STORE_NAME}</div>
+            <div class="store-info">
+              ${STORE_ADDRESS}<br />
+              Telp: ${STORE_PHONE}
+            </div>
+          </div>
+
+          <div class="report-title">LAPORAN PENJUALAN</div>
+          <div class="report-meta">
+            Periode: ${dateRangeLabel}<br />
+            Tanggal Cetak: ${new Date().toLocaleDateString('id-ID', { 
+              day: '2-digit', 
+              month: 'long', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">Total Penjualan</div>
+              <div class="summary-value">${formatCurrency(summary.totalRevenue)}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Jumlah Transaksi</div>
+              <div class="summary-value">${summary.totalTransactions}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Total Item Terjual</div>
+              <div class="summary-value">${summary.totalItems}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">Rata-rata Transaksi</div>
+              <div class="summary-value">${formatCurrency(summary.avgTransaction)}</div>
+            </div>
+          </div>
+
+          <div class="section-title">Produk Terlaris</div>
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Produk</th>
+                <th class="text-right">Jumlah Terjual</th>
+                <th class="text-right">Total Penjualan</th>
+                <th class="text-right">% dari Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${topProducts.map((product, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${product.name}</td>
+                  <td class="text-right">${product.quantity}</td>
+                  <td class="text-right">${formatCurrency(product.revenue)}</td>
+                  <td class="text-right">${((product.revenue / summary.totalRevenue) * 100).toFixed(1)}%</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="section-title">Metode Pembayaran</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Metode</th>
+                <th class="text-right">Jumlah Transaksi</th>
+                <th class="text-right">Total Nilai</th>
+                <th class="text-right">% dari Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${paymentBreakdown.map((method) => `
+                <tr>
+                  <td>${method.name}</td>
+                  <td class="text-right">${method.count}</td>
+                  <td class="text-right">${formatCurrency(method.value)}</td>
+                  <td class="text-right">${((method.value / summary.totalRevenue) * 100).toFixed(1)}%</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="section-title">Riwayat Transaksi Detail</div>
+          <table>
+            <thead>
+              <tr>
+                <th>No. Transaksi</th>
+                <th>Tanggal</th>
+                <th>Waktu</th>
+                <th>Pelanggan</th>
+                <th class="text-right">Item</th>
+                <th class="text-right">Total</th>
+                <th>Metode</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredTransactions.map((tx) => {
+                const date = new Date(tx.created_at)
+                return `
+                  <tr>
+                    <td>${tx.no}</td>
+                    <td>${date.toLocaleDateString('id-ID')}</td>
+                    <td>${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</td>
+                    <td>${tx.customer_name || 'Umum'}</td>
+                    <td class="text-right">${tx.item_count || 0}</td>
+                    <td class="text-right">${formatCurrency(tx.total)}</td>
+                    <td>${tx.payment_method || 'tunai'}</td>
+                  </tr>
+                `
+              }).join('')}
+            </tbody>
+          </table>
+
+          <div class="footer">
+            Laporan ini dicetak secara otomatis oleh sistem Kasgo POS<br />
+            © ${new Date().getFullYear()} ${STORE_NAME} - Semua hak dilindungi
+          </div>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    
+    // Wait for content to load then print
+    printWindow.onload = () => {
+      printWindow.print()
+    }
+    
+    toast.success('Laporan PDF siap dicetak!')
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Laporan Penjualan</h1>
           <p className="text-gray-600 mt-1">Analisis data penjualan dan performa toko</p>
         </div>
-        <select
-          value={dateRange}
-          onChange={(e) => setDateRange(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-        >
-          <option value="today">Hari Ini</option>
-          <option value="week">7 Hari Terakhir</option>
-          <option value="month">30 Hari Terakhir</option>
-          <option value="all">Semua Data</option>
-        </select>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <select
+            value={dateRange}
+            onChange={(e) => setDateRange(e.target.value)}
+            className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="today">Hari Ini</option>
+            <option value="week">7 Hari Terakhir</option>
+            <option value="month">30 Hari Terakhir</option>
+            <option value="all">Semua Data</option>
+          </select>
+          
+          <button
+            onClick={handleExportPDF}
+            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 font-medium shadow-lg hover:shadow-xl"
+          >
+            <FileDown size={18} />
+            <span className="hidden sm:inline">Export PDF</span>
+            <span className="sm:hidden">PDF</span>
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}

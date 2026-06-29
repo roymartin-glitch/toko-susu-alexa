@@ -122,9 +122,16 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
     return d.toLocaleDateString('id-ID', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  const formatTime = (date) => {
+    const d = new Date(date)
+    return d.toLocaleTimeString('id-ID', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      second: '2-digit'
     })
   }
 
@@ -172,6 +179,10 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span>Tanggal</span>
                 <span>{formatDate(transaction.created_at || new Date())}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                <span>Waktu</span>
+                <span>{formatTime(transaction.created_at || new Date())}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span>Kasir</span>

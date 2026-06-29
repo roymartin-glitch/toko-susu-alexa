@@ -17,7 +17,6 @@ import {
   Wallet,
   DollarSign,
   Bell,
-  Gift,
   Database,
   PieChart,
   ArrowUpRight,
@@ -206,7 +205,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen overflow-y-auto bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50">
       {/* Header dengan Gradient Modern */}
-      <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 px-4 pt-6 pb-4 shadow-lg">
+      <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 px-4 pt-6 pb-10 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">Kasgo</h1>
@@ -224,25 +223,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="p-3 sm:p-4 space-y-3 -mt-6">
-        {/* Pre-Order Banner - KASGO Style */}
-        <div className="bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 rounded-2xl sm:rounded-3xl p-4 sm:p-5 text-white shadow-2xl relative overflow-hidden hover:shadow-purple-500/30 transition-shadow">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
-          
-          <div className="relative flex items-center justify-between">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                <ShoppingBag className="text-white" size={24} />
-              </div>
-              <div>
-                <p className="text-sm sm:text-base text-purple-100 mb-1">Pre-Order</p>
-                <p className="text-2xl sm:text-3xl font-bold">1 <span className="text-base sm:text-lg font-normal">pesanan baru</span></p>
-              </div>
-            </div>
-            <Gift className="text-white/20" size={56} />
-          </div>
-        </div>
-
         {/* Quick Stats - Enhanced */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           <div className="bg-white rounded-2xl p-3 sm:p-4 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
@@ -375,9 +355,9 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span>Sistem Online</span>
+              <span>Sistem Alexa</span>
             </div>
-            <span>v2.0 • Kasgo POS</span>
+            <span>Kasgo POS</span>
           </div>
         </div>
       </div>
