@@ -19,6 +19,8 @@ export default function SettingsPage() {
     paper_size: '80mm',
     show_logo: true,
     dark_mode: false,
+    timezone: 'Asia/Jakarta',
+    use_realtime: true,
   })
 
   const [isSaving, setIsSaving] = useState(false)
@@ -35,9 +37,20 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      // Simulate API call
+      // Save to localStorage for timezone and realtime settings
+      localStorage.setItem('app_timezone', settings.timezone)
+      localStorage.setItem('app_use_realtime', settings.use_realtime ? 'true' : 'false')
+      
+      // Simulate API call for other settings
       await new Promise((resolve) => setTimeout(resolve, 1000))
       toast.success('Pengaturan berhasil disimpan')
+      
+      // Reload page to apply timezone changes
+      if (settings.timezone !== localStorage.getItem('app_timezone')) {
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      }
     } catch (error) {
       toast.error('Gagal menyimpan pengaturan')
     } finally {
@@ -233,6 +246,74 @@ export default function SettingsPage() {
                 <label htmlFor="show_logo" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Tampilkan logo di struk
                 </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Time & System Settings */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Pengaturan Waktu & Sistem</h3>
+
+            <div className="space-y-4">
+              {/* Use Real-time */}
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <input
+                    type="checkbox"
+                    id="use_realtime"
+                    checked={settings.use_realtime}
+                    onChange={(e) => handleChange('use_realtime', e.target.checked)}
+                    className="w-4 h-4 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <label htmlFor="use_realtime" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Gunakan waktu real-time otomatis
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 ml-7">
+                  Sistem akan menggunakan waktu dari perangkat Anda
+                </p>
+              </div>
+
+              {/* Timezone Selection */}
+              {!settings.use_realtime && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Zona Waktu
+                  </label>
+                  <select
+                    value={settings.timezone}
+                    onChange={(e) => handleChange('timezone', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    <option value="Asia/Jakarta">WIB - Jakarta (GMT+7)</option>
+                    <option value="Asia/Makassar">WITA - Makassar (GMT+8)</option>
+                    <option value="Asia/Jayapura">WIT - Jayapura (GMT+9)</option>
+                  </select>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Pilih zona waktu sesuai lokasi toko Anda
+                  </p>
+                </div>
+              )}
+
+              {/* Current Time Display */}
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800 p-3">
+                <p className="text-xs font-medium text-emerald-900 dark:text-emerald-300 mb-1">
+                  Waktu Sekarang:
+                </p>
+                <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                  {new Date().toLocaleString('id-ID', {
+                    timeZone: settings.use_realtime ? undefined : settings.timezone,
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}
+                </p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1">
+                  {settings.use_realtime ? '🔄 Real-time otomatis' : `📍 ${settings.timezone}`}
+                </p>
               </div>
             </div>
           </div>
