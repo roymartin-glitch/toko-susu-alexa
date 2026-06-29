@@ -148,7 +148,7 @@ export default function POSPage() {
 
       await createTransaction.mutateAsync(transactionData)
       
-      // Reset form
+      // Reset form ONLY after successful transaction
       setCart([])
       setSelectedCustomer(null)
       setPaymentMethod('tunai')
@@ -156,8 +156,38 @@ export default function POSPage() {
       
       toast.success('✓ Transaksi berhasil!')
     } catch (error) {
-      console.error('Payment error:', error)
-      toast.error('Transaksi gagal: ' + (error?.message || 'Terjadi kesalahan'))
+      console.error('Payment error details:', {
+        error,
+        message: error?.message,
+        name: error?.name,
+        stack: error?.stack
+      })
+      
+      // DON'T close modal or clear cart on error
+      // User-friendly error messages
+      let errorMessage = 'Transaksi gagal'
+      
+      if (error?.message?.includes('Sesi login habis') || error?.message?.includes('Unauthorized')) {
+        errorMessage = '⚠️ Sesi login Anda telah habis. Silakan login ulang untuk melanjutkan.'
+        
+        // Redirect to login after showing error
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 3000)
+      } else if (error?.message?.includes('Stok tidak cukup')) {
+        errorMessage = '⚠️ ' + error.message
+      } else if (error?.message?.includes('Produk') && error?.message?.includes('tidak ditemukan')) {
+        errorMessage = '⚠️ ' + error.message
+      } else if (error?.message) {
+        errorMessage = 'Transaksi gagal: ' + error.message
+      }
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+      })
+      
+      // Keep modal open so user can retry
+      // Cart data is preserved
     }
   }
 
