@@ -28,6 +28,7 @@ import Link from 'next/link'
 import QuickActions from '@/app/components/dashboard/QuickActions'
 import RecentActivity from '@/app/components/dashboard/RecentActivity'
 import TopProducts from '@/app/components/dashboard/TopProducts'
+import TodaySales from '@/app/components/dashboard/TodaySales'
 
 // Menu Items - KASGO Style dengan icon colorful (hanya fitur relevan untuk kasir toko susu offline)
 const menuItems = [
@@ -71,22 +72,7 @@ const menuItems = [
     hoverColor: 'hover:bg-indigo-600',
     shadowColor: 'shadow-indigo-500/30'
   },
-  { 
-    href: '/dash/reports', 
-    label: 'Pre-Order', 
-    icon: ClipboardList, 
-    bgColor: 'bg-purple-500',
-    hoverColor: 'hover:bg-purple-600',
-    shadowColor: 'shadow-purple-500/30'
-  },
-  { 
-    href: '/dash/pos', 
-    label: 'Supplier', 
-    icon: ShoppingBag, 
-    bgColor: 'bg-amber-600',
-    hoverColor: 'hover:bg-amber-700',
-    shadowColor: 'shadow-amber-600/30'
-  },
+  
   { 
     href: '/dash/reports', 
     label: 'Pembelian', 
@@ -95,22 +81,7 @@ const menuItems = [
     hoverColor: 'hover:bg-cyan-600',
     shadowColor: 'shadow-cyan-500/30'
   },
-  { 
-    href: '/dash/reports', 
-    label: 'Pengeluaran', 
-    icon: DollarSign, 
-    bgColor: 'bg-red-500',
-    hoverColor: 'hover:bg-red-600',
-    shadowColor: 'shadow-red-500/30'
-  },
-  { 
-    href: '/dash/reports', 
-    label: 'Hutang', 
-    icon: Wallet, 
-    bgColor: 'bg-rose-600',
-    hoverColor: 'hover:bg-rose-700',
-    shadowColor: 'shadow-rose-600/30'
-  },
+
   { 
     href: '/dash/reports', 
     label: 'Laporan', 
@@ -319,6 +290,9 @@ export default function DashboardPage() {
       {/* Dashboard Widgets Section */}
       <div className="px-3 sm:px-4 pb-4 space-y-4">
         <h2 className="text-base sm:text-lg font-bold text-gray-900">Dashboard</h2>
+        
+        {/* Produk Laku Hari Ini - Full Width */}
+        <TodaySales transactions={transactions} />
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <QuickActions />
