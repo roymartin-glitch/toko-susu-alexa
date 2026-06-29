@@ -167,7 +167,7 @@ export default function POSPage() {
       // User-friendly error messages
       let errorMessage = 'Transaksi gagal'
       
-      if (error?.message?.includes('Sesi login habis') || error?.message?.includes('Unauthorized')) {
+      if (error?.message?.includes('Sesi login habis') || error?.message?.includes('silakan login ulang')) {
         errorMessage = '⚠️ Sesi login Anda telah habis. Silakan login ulang untuk melanjutkan.'
         
         // Redirect to login after showing error
