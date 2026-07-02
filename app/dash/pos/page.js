@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useProducts, useCustomers, useCreateTransaction } from '@/lib/hooks'
-import { formatCurrency, generateTransactionNumber, searchInArray } from '@/lib/utils'
+import { formatCurrency, generateTransactionNumber, searchInArray, toWIBISOString } from '@/lib/utils'
 import { Search, Plus, Minus, Trash2, ShoppingCart, X, User, DollarSign, Check, ScanLine, Camera } from 'lucide-react'
 import { toast } from 'sonner'
 import BarcodeScanner from '@/app/components/pos/BarcodeScanner'
@@ -146,7 +146,7 @@ export default function POSPage() {
         payment_method: paymentMethod,
         paid: totals.total,
         change: 0,
-        created_at: new Date().toISOString()
+        created_at: toWIBISOString() // Use WIB timezone
       }
 
       await createTransaction.mutateAsync(transactionData)

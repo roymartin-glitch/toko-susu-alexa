@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import { X, Printer } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDate as formatDateUtil, formatTime as formatTimeUtil } from '@/lib/utils'
 import { STORE_NAME, STORE_ADDRESS, STORE_PHONE } from '@/lib/constants'
 
 export default function ThermalReceipt({ transaction, onClose, onPrint }) {
@@ -117,24 +117,6 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
     if (onPrint) onPrint()
   }
 
-  const formatDate = (date) => {
-    const d = new Date(date)
-    return d.toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
-  }
-
-  const formatTime = (date) => {
-    const d = new Date(date)
-    return d.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    })
-  }
-
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-md">
@@ -178,11 +160,11 @@ export default function ThermalReceipt({ transaction, onClose, onPrint }) {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span>Tanggal</span>
-                <span>{formatDate(transaction.created_at || new Date())}</span>
+                <span>{formatDateUtil(transaction.created_at || new Date())}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span>Waktu</span>
-                <span>{formatTime(transaction.created_at || new Date())}</span>
+                <span>{formatTimeUtil(transaction.created_at || new Date())} WIB</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span>Kasir</span>
