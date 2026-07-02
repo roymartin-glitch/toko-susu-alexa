@@ -215,7 +215,7 @@ export default function DashboardPage() {
             <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-2 shadow-lg shadow-emerald-500/30">
               <TrendingUp className="text-white" size={20} />
             </div>
-            <p className="text-xs text-gray-500 mb-1">Hari Ini</p>
+            <p className="text-xs text-gray-500 mb-1">Saldo</p>
             <p className="text-base sm:text-xl font-bold text-gray-900 truncate mb-1">{formatCurrency(kpis.totalRevenue)}</p>
             {kpis.revenueChange !== 0 && (
               <div className={`flex items-center gap-1 ${parseFloat(kpis.revenueChange) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
@@ -247,7 +247,7 @@ export default function DashboardPage() {
             <p className="text-base sm:text-xl font-bold text-gray-900 mb-1">{kpis.totalProducts}</p>
             <div className="flex items-center gap-1 text-gray-500">
               <Users size={12} />
-              <span className="text-xs">{kpis.totalCustomers} pelanggan</span>
+              <span className="text-xs">{kpis.totalCustomers} member</span>
             </div>
           </div>
         </div>
