@@ -23,7 +23,7 @@ import {
   ArrowDownRight,
   Receipt
 } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import Link from 'next/link'
 import QuickActions from '@/app/components/dashboard/QuickActions'
 import RecentActivity from '@/app/components/dashboard/RecentActivity'
@@ -129,6 +129,18 @@ export default function DashboardPage() {
   const { data: products = [] } = useProducts()
   const { data: customers = [] } = useCustomers()
 
+  // Real-time clock state
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  // Update clock every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
   // Calculate KPIs
   const kpis = useMemo(() => {
     const today = new Date()
@@ -160,7 +172,7 @@ export default function DashboardPage() {
       ? ((totalTransactions - yesterdayTransactions.length) / yesterdayTransactions.length * 100).toFixed(1)
       : 0
 
-    const lowStockProducts = products.filter((p) => p.stock <= 10).length
+    const lowStockProducts = products.filter((p) => p.stock <= 2).length
 
     return {
       totalRevenue,
@@ -180,7 +192,10 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">Kasgo</h1>
-            <p className="text-sm text-emerald-100">{formatDateIndonesian(new Date())}</p>
+            <p className="text-sm text-emerald-100">{formatDateIndonesian(currentTime)}</p>
+            <p className="text-xs text-emerald-100 font-mono mt-0.5">
+              {currentTime.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">

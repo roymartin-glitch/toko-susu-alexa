@@ -10,26 +10,42 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     -webkit-text-size-adjust: 100%;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
   }
 
   body {
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
+    width: 100%;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overflow-x: hidden;
+    position: relative;
   }
 
   * {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    box-sizing: border-box;
   }
 
   input, textarea, button, select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    border-radius: 0;
   }
 
   input:focus, textarea:focus, select:focus {
-    font-size: 16px !important; /* Prevent zoom on iOS */
+    font-size: 16px !important; /* Prevent zoom on iOS and Android */
+  }
+
+  /* Fix untuk Android Chrome address bar */
+  #__next, [data-nextjs-app], main {
+    width: 100%;
+    overflow-x: hidden;
   }
 }
 
@@ -56,6 +72,26 @@
 
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Mobile responsive utilities */
+  .mobile-full-height {
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
+
+  /* Fix untuk scrollbar yang muncul di mobile */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

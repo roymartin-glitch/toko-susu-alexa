@@ -214,48 +214,48 @@ export default function POSPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-80px)] flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 w-full overflow-x-hidden">
       {/* HEADER - Customer & Cart Summary */}
-      <div className="bg-white border-b border-gray-200 p-3 sm:p-4">
-        <div className="flex items-center justify-between gap-3">
+      <div className="bg-white border-b border-gray-200 p-2 sm:p-3 md:p-4 flex-shrink-0">
+        <div className="flex items-center justify-between gap-2 sm:gap-3 w-full">
           {/* Customer Button */}
           <button
             onClick={() => setShowCustomerModal(true)}
-            className="flex-1 flex items-center gap-2 sm:gap-3 bg-gray-50 hover:bg-gray-100 rounded-xl p-3 sm:p-4 border-2 border-gray-200 hover:border-emerald-500 transition-all"
+            className="flex-1 flex items-center gap-1.5 sm:gap-2 md:gap-3 bg-gray-50 hover:bg-gray-100 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-gray-200 hover:border-emerald-500 transition-all min-w-0"
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="text-emerald-600" size={20} />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <User className="text-emerald-600" size={16} />
             </div>
             <div className="text-left flex-1 min-w-0">
               <p className="text-xs text-gray-500">Pelanggan</p>
-              <p className="font-bold text-sm sm:text-base text-gray-900 truncate">
+              <p className="font-bold text-xs sm:text-sm md:text-base text-gray-900 truncate">
                 {selectedCustomer?.name || 'Umum'}
               </p>
             </div>
           </button>
 
           {/* Cart Summary */}
-          <div className="bg-emerald-50 rounded-xl p-3 sm:p-4 border-2 border-emerald-200 text-right">
+          <div className="bg-emerald-50 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 border border-emerald-200 text-right flex-shrink-0">
             <p className="text-xs text-emerald-700 font-medium">Total Belanja</p>
-            <p className="font-bold text-base sm:text-xl text-emerald-600">
+            <p className="font-bold text-sm sm:text-base md:text-xl text-emerald-600">
               {formatCurrency(totals.total)}
             </p>
-            <p className="text-xs text-emerald-600 mt-1">{totals.itemCount} item</p>
+            <p className="text-xs text-emerald-600 mt-0.5">{totals.itemCount} item</p>
           </div>
         </div>
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      <div className="flex-1 overflow-hidden flex flex-col w-full">
         {/* Search Bar with Scan Button */}
-        <div className="p-3 sm:p-4 bg-white border-b border-gray-200">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <div className="p-2 sm:p-3 md:p-4 bg-white border-b border-gray-200 flex-shrink-0">
+          <div className="flex gap-1.5 sm:gap-2 w-full">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Cari produk atau scan barcode..."
+                placeholder="Cari produk..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => {
@@ -268,37 +268,37 @@ export default function POSPage() {
                     }
                   }
                 }}
-                className="w-full pl-10 pr-4 py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-base"
+                className="w-full pl-8 sm:pl-10 pr-2 sm:pr-4 py-2.5 sm:py-3 md:py-4 border border-gray-300 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
               />
             </div>
             
             {/* Scan Barcode Button */}
             <button
               onClick={() => setShowBarcodeScanner(true)}
-              className="px-4 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl active:scale-95 flex items-center gap-2 whitespace-nowrap"
+              className="px-3 sm:px-4 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg sm:rounded-xl font-bold hover:from-blue-700 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl active:scale-95 flex items-center gap-1.5 sm:gap-2 whitespace-nowrap flex-shrink-0"
             >
-              <Camera size={20} />
-              <span className="hidden sm:inline">Scan</span>
+              <Camera size={18} className="sm:w-5 sm:h-5" />
+              <span className="text-sm sm:text-base">Scan</span>
             </button>
           </div>
         </div>
 
         {/* Products Grid - Large Touch Buttons */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+        <div className="flex-1 overflow-y-auto p-2 sm:p-3 md:p-4 no-scrollbar w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5 sm:gap-2 md:gap-3 w-full">
             {filteredProducts.map((product) => (
               <button
                 key={product.id}
                 onClick={() => addToCart(product)}
                 disabled={product.stock === 0}
-                className={`relative p-3 sm:p-4 rounded-2xl border-2 transition-all text-left min-h-[120px] sm:min-h-[140px] flex flex-col ${
+                className={`relative p-2 sm:p-3 md:p-4 rounded-lg sm:rounded-xl md:rounded-2xl border transition-all text-left min-h-[100px] sm:min-h-[120px] md:min-h-[140px] flex flex-col w-full ${
                   product.stock === 0
                     ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
                     : 'border-emerald-200 bg-white hover:border-emerald-500 hover:bg-emerald-50 active:scale-95 shadow-sm hover:shadow-md'
                 }`}
               >
                 {/* Stock Badge */}
-                <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${
+                <div className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-bold ${
                   product.stock > 10
                     ? 'bg-green-100 text-green-700'
                     : product.stock > 5
@@ -308,15 +308,15 @@ export default function POSPage() {
                   {product.stock}
                 </div>
                 
-                <div className="flex-1">
-                  <p className="font-bold text-sm sm:text-base text-gray-900 line-clamp-2 pr-8 mb-1">
+                <div className="flex-1 min-h-0">
+                  <p className="font-bold text-xs sm:text-sm md:text-base text-gray-900 line-clamp-2 pr-6 sm:pr-8 mb-0.5 sm:mb-1">
                     {product.name}
                   </p>
-                  <p className="text-xs text-gray-500 font-mono">{product.barcode}</p>
+                  <p className="text-xs text-gray-500 font-mono truncate">{product.barcode}</p>
                 </div>
                 
-                <div className="mt-auto pt-2">
-                  <p className="font-bold text-base sm:text-lg text-emerald-600">
+                <div className="mt-auto pt-1 sm:pt-2">
+                  <p className="font-bold text-sm sm:text-base md:text-lg text-emerald-600">
                     {formatCurrency(product.sell_price)}
                   </p>
                 </div>
@@ -337,21 +337,21 @@ export default function POSPage() {
 
       {/* BOTTOM BAR - Cart & Checkout */}
       {cart.length > 0 && (
-        <div className="bg-white border-t-2 border-gray-200 p-3 sm:p-4 shadow-lg">
-          <div className="flex items-center gap-2 sm:gap-3">
+        <div className="bg-white border-t-2 border-gray-200 p-2 sm:p-3 md:p-4 shadow-lg flex-shrink-0 w-full">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 w-full">
             {/* Cart Items Count */}
             <button
               onClick={() => setShowPaymentModal(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-3 bg-gray-100 rounded-xl border-2 border-gray-200"
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 bg-gray-100 rounded-lg sm:rounded-xl border border-gray-200 flex-shrink-0"
             >
-              <ShoppingCart className="text-gray-700" size={20} />
-              <span className="font-bold text-gray-900">{cart.length}</span>
+              <ShoppingCart className="text-gray-700" size={18} />
+              <span className="font-bold text-gray-900 text-sm sm:text-base">{cart.length}</span>
             </button>
 
             {/* Clear Cart */}
             <button
               onClick={clearCart}
-              className="px-3 sm:px-4 py-3 bg-red-50 text-red-600 rounded-xl border-2 border-red-200 hover:bg-red-100 font-medium"
+              className="px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 bg-red-50 text-red-600 rounded-lg sm:rounded-xl border border-red-200 hover:bg-red-100 font-medium text-xs sm:text-sm flex-shrink-0"
             >
               Batal
             </button>
@@ -359,7 +359,7 @@ export default function POSPage() {
             {/* Checkout Button - Large & Prominent */}
             <button
               onClick={() => setShowPaymentModal(true)}
-              className="flex-1 py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl active:scale-95 transition-all"
+              className="flex-1 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg sm:rounded-xl font-bold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl active:scale-95 transition-all min-w-0 truncate"
             >
               💰 Bayar {formatCurrency(totals.total)}
             </button>
